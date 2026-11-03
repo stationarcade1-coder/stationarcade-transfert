@@ -12,10 +12,12 @@ document.addEventListener('click',function(e){var d=SA.devis(),b;
  else if(b=e.target.closest('[data-dec]')){SA.set(b.dataset.dec,(d[b.dataset.dec]||0)-1)}
  else if(b=e.target.closest('[data-rm]')){SA.set(b.dataset.rm,0)}});
 document.addEventListener('sa-devis',liste);liste();
+var dt=$('#d-date');if(dt){var n=new Date();dt.min=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')}
 var f=$('#fd'),btn=$('#fd-btn'),er=$('#fd-err'),ok=$('#fd-ok'),envoi=false;
 f.addEventListener('submit',function(e){e.preventDefault();if(envoi)return;er.hidden=true;
  var v=function(n){var el=f.elements[n];return el?(el.value||'').trim():''};
  var manque=[];if(!v('nom'))manque.push('votre nom');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email')))manque.push('un e-mail valide');
+ if(v('date')&&dt&&v('date')<dt.min)manque.push('une date à venir');
  if(manque.length){er.textContent='Merci d’indiquer '+manque.join(' et ')+'.';er.hidden=false;(f.elements[v('nom')?'email':'nom']).focus();return}
  var d=SA.devis(),machines=Object.keys(d).filter(function(k){return d[k]>0}).map(function(k){return {id:k,q:d[k],nom:(P[k]||{}).nom||k}});
  var data={jeton:jeton,site_web:v('site_web'),nom:v('nom'),societe:v('societe'),email:v('email'),tel:v('tel'),date:v('date'),duree:v('duree'),lieu:v('lieu'),type:v('type'),perso:(f.querySelector('input[name=perso]:checked')||{}).value||'',message:v('message'),machines:machines,page:document.referrer||location.href};
