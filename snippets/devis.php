@@ -53,15 +53,19 @@ function sa_devis_recevoir(WP_REST_Request $req) {
 	$txt = function ($k, $max = 200) use ($d) { return isset($d[$k]) ? mb_substr(sanitize_text_field((string) $d[$k]), 0, $max) : ''; };
 	$f = [
 		'nom' => $txt('nom', 120), 'societe' => $txt('societe', 160), 'email' => sanitize_email(isset($d['email']) ? $d['email'] : ''),
-		'tel' => $txt('tel', 40), 'date' => $txt('date', 20), 'duree' => $txt('duree', 40), 'lieu' => $txt('lieu', 160),
-		'type' => $txt('type', 60), 'perso' => $txt('perso', 40),
+		'tel' => $txt('tel', 40), 'date' => $txt('date', 20), 'date_fin' => $txt('date_fin', 20), 'lieu' => $txt('lieu', 160),
+		'perso' => $txt('perso', 10),
 		'message' => isset($d['message']) ? mb_substr(sanitize_textarea_field((string) $d['message']), 0, 3000) : '',
 		'page' => esc_url_raw(isset($d['page']) ? $d['page'] : ''),
 	];
 	$err = [];
 	if ($f['nom'] === '') $err[] = 'votre nom';
 	if (!is_email($f['email'])) $err[] = 'un e-mail valide';
-	if ($f['date'] !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $f['date'])) $f['date'] = '';
+	if (strlen(preg_replace('/\D/', '', $f['tel'])) < 9) $err[] = 'votre téléphone';
+	foreach (['date', 'date_fin'] as $k) { if ($f[$k] !== '' && (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $f[$k]) || $f[$k] < current_time('Y-m-d'))) $f[$k] = ''; }
+	if ($f['date'] === '' || $f['date_fin'] < $f['date']) $f['date_fin'] = $f['date'];
+	$fmt = function ($s) { return $s ? date_i18n('j F Y', strtotime($s)) : ''; };
+	$dates = $f['date'] ? ($f['date_fin'] !== $f['date'] ? 'du ' . $fmt($f['date']) . ' au ' . $fmt($f['date_fin']) : 'le ' . $fmt($f['date'])) : 'non précisées';
 	if ($err) return sa_devis_erreur('Merci d’indiquer ' . implode(' et ', $err) . '.');
 
 	$machines = [];
@@ -94,7 +98,7 @@ function sa_devis_recevoir(WP_REST_Request $req) {
 	$lignes = $machines ? implode("\n", array_map(function ($m) { return '- ' . $m['nom'] . ' × ' . $m['q']; }, $machines)) : '- Aucune machine choisie (conseil souhaité)';
 	$corps = "Nouvelle demande de devis $ref\n\n" .
 		"Nom : {$f['nom']}\nSociété : {$f['societe']}\nE-mail : {$f['email']}\nTéléphone : {$f['tel']}\n\n" .
-		"Date : {$f['date']}\nDurée : {$f['duree']}\nLieu : {$f['lieu']}\nType : {$f['type']}\nPersonnalisation : {$f['perso']}\n\n" .
+		"Dates : $dates\nLieu : {$f['lieu']}\nPersonnalisation : {$f['perso']}\n\n" .
 		"Machines :\n$lignes\n\nMessage :\n{$f['message']}\n\nPage d’origine : {$f['page']}\n\n" .
 		"Voir dans l’administration : " . admin_url('post.php?post=' . $id . '&action=edit');
 	$ok1 = wp_mail(SA_DEVIS_DEST, "[Devis] $ref – {$f['nom']}" . ($f['societe'] ? " ({$f['societe']})" : ''), $corps, ['Reply-To: ' . $f['nom'] . ' <' . $f['email'] . '>']);
@@ -112,7 +116,7 @@ add_action('add_meta_boxes', function () {
 	add_meta_box('sa_devis_detail', 'Détail de la demande', function ($post) {
 		$g = function ($k) use ($post) { return esc_html(get_post_meta($post->ID, '_sa_' . $k, true)); };
 		echo '<table class="widefat striped"><tbody>';
-		foreach (['ref' => 'Référence', 'nom' => 'Nom', 'societe' => 'Société', 'email' => 'E-mail', 'tel' => 'Téléphone', 'date' => 'Date', 'duree' => 'Durée', 'lieu' => 'Lieu', 'type' => 'Type', 'perso' => 'Personnalisation', 'page' => 'Page d’origine'] as $k => $l) echo '<tr><th style="width:160px">' . $l . '</th><td>' . $g($k) . '</td></tr>';
+		foreach (['ref' => 'Référence', 'nom' => 'Nom', 'societe' => 'Société', 'email' => 'E-mail', 'tel' => 'Téléphone', 'date' => 'Début', 'date_fin' => 'Fin', 'lieu' => 'Lieu', 'perso' => 'Personnalisation', 'page' => 'Page d’origine'] as $k => $l) echo '<tr><th style="width:160px">' . $l . '</th><td>' . $g($k) . '</td></tr>';
 		$m = get_post_meta($post->ID, '_sa_machines', true);
 		echo '<tr><th>Machines</th><td>' . ($m ? implode('<br>', array_map(function ($x) { return esc_html($x['nom'] . ' × ' . $x['q']); }, $m)) : 'Conseil souhaité') . '</td></tr>';
 		echo '<tr><th>Message</th><td>' . nl2br($g('message')) . '</td></tr>';
@@ -135,5 +139,5 @@ add_action('save_post_sa_devis', function ($id) {
 add_filter('manage_sa_devis_posts_columns', function ($c) { return ['cb' => $c['cb'], 'title' => 'Demande', 'sa_date_evt' => 'Date événement', 'sa_statut' => 'Statut', 'date' => 'Reçue le']; });
 add_action('manage_sa_devis_posts_custom_column', function ($col, $id) {
 	if ($col === 'sa_statut') { $s = get_post_meta($id, '_sa_statut', true); echo esc_html(sa_devis_statuts()[$s] ?? $s); if (!get_post_meta($id, '_sa_mail_entreprise', true)) echo ' <span style="color:#b32d2e">· e-mail non parti</span>'; }
-	if ($col === 'sa_date_evt') echo esc_html(get_post_meta($id, '_sa_date', true));
+	if ($col === 'sa_date_evt') { $a = get_post_meta($id, '_sa_date', true); $b = get_post_meta($id, '_sa_date_fin', true); echo esc_html($a . ($b && $b !== $a ? ' → ' . $b : '')); }
 }, 10, 2);

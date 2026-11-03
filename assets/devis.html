@@ -12,40 +12,34 @@
         <h1>Votre demande de devis</h1>
         <p style="color:var(--doux);margin-bottom:26px">Quelques informations sur l'événement suffisent. Vous ne savez pas quelle machine choisir ? Décrivez votre projet, nous vous conseillons.</p>
         <form class="fd" id="fd" novalidate>
-          <fieldset>
+          <fieldset class="evt">
             <legend>L'événement</legend>
-            <div class="f"><label for="d-date">Date de début</label><input id="d-date" name="date" type="date"></div>
-            <div class="f"><label for="d-jours">Durée</label><select id="d-jours" name="duree"><option>1 jour</option><option>2 jours</option><option>3 jours</option><option>4 à 7 jours</option><option>Plus d'une semaine</option></select></div>
-            <div class="f"><label for="d-lieu">Lieu (ville ou code postal)</label><input id="d-lieu" name="lieu" type="text" placeholder="Paris 8e, La Défense…"></div>
-            <div class="f"><label for="d-type">Type d'événement</label><select id="d-type" name="type"><option>Salon</option><option>Pop-up ou boutique</option><option>Lancement de produit</option><option>Soirée ou séminaire</option><option>Anniversaire ou fête privée</option><option>Autre</option></select></div>
+            <div class="f full"><span class="lab" id="cal-lab">Dates de l'événement</span>
+              <div class="cal" id="cal" role="group" aria-labelledby="cal-lab"></div>
+              <span class="h" id="cal-txt" aria-live="polite">Cliquez sur le premier jour, puis sur le dernier jour.</span>
+              <input type="hidden" name="date_debut" id="d-debut"><input type="hidden" name="date_fin" id="d-fin">
+            </div>
+            <div class="f full"><label for="d-lieu">Lieu (ville ou code postal)</label><input id="d-lieu" name="lieu" type="text" placeholder="Paris 8e, La Défense…"></div>
           </fieldset>
           <fieldset>
             <legend>Personnalisation</legend>
-            <div class="f full"><span class="lab" id="p-lab">Souhaitez-vous habiller les machines ?</span>
-              <div class="radios" role="radiogroup" aria-labelledby="p-lab">
-                <label><input type="radio" name="perso" value="Habillage complet" checked> Habillage complet</label>
-                <label><input type="radio" name="perso" value="Logo seulement"> Logo seulement</label>
-                <label><input type="radio" name="perso" value="Sans personnalisation"> Sans personnalisation</label>
-                <label><input type="radio" name="perso" value="À conseiller"> À conseiller</label>
-              </div>
+            <div class="f full"><label class="chk"><input type="checkbox" name="perso" value="Oui"> Oui, je souhaite personnaliser les machines</label>
               <span class="h">Le visuel est à fournir au plus tard 10 jours avant l'événement. Tarif de la personnalisation sur devis.</span>
             </div>
-            <div class="f full"><label for="d-msg">Votre projet en quelques mots</label><textarea id="d-msg" name="message" placeholder="Lots prévus, nombre de visiteurs attendus, contraintes d'accès…"></textarea></div>
-          </fieldset>
-          <fieldset>
-            <legend>Vos coordonnées</legend>
-            <div class="f"><label for="d-nom">Nom *</label><input id="d-nom" name="nom" type="text" autocomplete="name" required></div>
-            <div class="f"><label for="d-soc">Société ou agence</label><input id="d-soc" name="societe" type="text" autocomplete="organization"></div>
-            <div class="f"><label for="d-mail">E-mail *</label><input id="d-mail" name="email" type="email" autocomplete="email" required></div>
-            <div class="f"><label for="d-tel">Téléphone</label><input id="d-tel" name="tel" type="tel" autocomplete="tel"></div>
-            <div class="f" style="position:absolute;left:-9999px" aria-hidden="true"><label for="d-site">Site web</label><input id="d-site" name="site_web" type="text" tabindex="-1" autocomplete="off"></div>
-          </fieldset>
-          <p class="h" style="font-size:13px;color:var(--doux)">Vos informations servent uniquement à préparer votre devis. <a href="/confidentialite/" style="color:var(--cyan)">Politique de confidentialité</a>.</p>
-          <div><button class="b-jaune" type="submit" id="fd-btn">Envoyer ma demande</button></div>
-          <div class="err" id="fd-err" hidden role="alert" style="margin-top:14px;padding:12px 14px;border:1px solid #ff1c26;color:#fff;border-radius:4px"></div>
-          <div class="ok" id="fd-ok" hidden role="status" tabindex="-1"></div>
-        </form>
-      </div>
-    </div>
   </div>
+<style>
+.cal{max-width:340px;background:var(--nuit3);border:1px solid rgba(255,255,255,.22);border-radius:4px;padding:12px;margin-top:6px}
+.cal .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-weight:600;text-transform:capitalize}
+.cal .ch button{background:none;border:1px solid rgba(255,255,255,.25);color:var(--blanc);width:32px;height:32px;border-radius:3px}
+.cal .ch button:disabled{opacity:.3;cursor:default}
+.cal .g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.cal .g span{font-size:11px;color:var(--doux);padding:4px 0}
+.cal .g button{background:none;border:0;color:var(--blanc);height:36px;border-radius:3px;font-size:14px}
+.cal .g button:hover:not(:disabled){background:rgba(0,225,212,.18)}
+.cal .g button:disabled{color:rgba(255,255,255,.25);cursor:default}
+.cal .g button.in{background:rgba(0,225,212,.25);border-radius:0}
+.cal .g button.d,.cal .g button.e{background:var(--cyan);color:var(--nuit3);font-weight:700}
+.chk{display:flex;align-items:center;gap:10px;font-weight:500;cursor:pointer}
+.chk input{width:20px!important;height:20px;accent-color:var(--cyan)}
+</style>
 </main>
