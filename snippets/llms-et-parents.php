@@ -62,7 +62,7 @@ Points clés :
 - [Sticks réaction]({H}/produit/jeu-sticks-reaction/): Location Sticks réaction personnalisé : un jeu de réflexes à vos couleurs pour animer votre stand. Livraison et installation en Île-de-France.
 - [Beeper spirale]({H}/produit/jeu-beeper-spirale/): Location Beeper spirale personnalisé : un jeu d’adresse à vos couleurs pour attirer le public sur votre stand. Livraison et installation en Île-de-France.
 - [Borne Arcade 3000 26″]({H}/produit/borne-arcade-3000-26/): Location borne Arcade 3000 26″ : 3 000 jeux rétro et modernes à deux joueurs pour animer votre soirée. Livraison et installation en Île-de-France.
-- [Borne Fight 32″]({H}/produit/borne-fight-32/): Location borne Fight 32″ : 300 jeux, dont de nombreux jeux de combat, pour des duels entre invités. Livraison et installation en Île-de-France.
+- [Borne Fight 32″]({H}/produit/borne-fight-32/): Location borne Fight 32″ : plus de 3 000 jeux, dont de nombreux jeux de combat, pour des duels entre invités. Livraison et installation en Île-de-France.
 - [Borne Mortal Kombat 32″]({H}/produit/borne-mortal-kombat-32/): Location borne Mortal Kombat 32″ personnalisée : le jeu de combat culte à vos couleurs pour des duels rétro. Livraison et installation en Île-de-France.
 - [Borne Pac-Man 19″]({H}/produit/borne-pac-man-19/): Location borne Pac-Man 19″ : le jeu culte en version arcade pour un défi au meilleur score entre invités. Livraison et installation en Île-de-France.
 - [Pac-Man baril adulte 19″]({H}/produit/pacman-baril-adulte-19/): Location Pac-Man baril adulte 19″ : une borne rétro originale pour jouer à deux autour d’un baril. Livraison et installation en Île-de-France.
