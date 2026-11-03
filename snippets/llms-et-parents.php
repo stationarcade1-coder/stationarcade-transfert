@@ -1,0 +1,149 @@
+<?php
+// llms.txt (résumé du site pour les assistants IA) + pages parents vides redirigées + exclues du sitemap
+add_action('init', function () {
+	$chemin = strtok($_SERVER['REQUEST_URI'] ?? '', '?');
+	if ($chemin === '/llms.txt') {
+		if (function_exists('v_forcelogin') && !is_user_logged_in()) return; // préproduction protégée
+		$texte = <<<'LLMS_TXT'
+# Station Arcade
+
+> Station Arcade loue et personnalise des machines à pince, gashapons, distributeurs de cadeaux, jeux d'arcade et simulateurs pour les événements de marque (salons, lancements de produit, boutiques et pop-up stores, soirées d'entreprise). Livraison, installation et reprise par l'équipe ; 95 % des événements en Île-de-France, intervention dans toute la France sur devis.
+
+Points clés :
+- Cœur d'activité : la location. La personnalisation (habillage aux couleurs d'une marque) se fait à partir de gabarits ; le client fournit ses visuels, Station Arcade gère l'impression, le réglage de la machine, la livraison, l'installation et la reprise.
+- Les tarifs de location affichés sont en HT par jour ; la personnalisation est uniquement sur devis.
+- Société : SAS STATION ARCADE, Livry-Gargan (Seine-Saint-Denis). Contact : contact@stationarcade.fr, 06 29 72 90 92.
+
+## Pages principales
+- [Accueil]({H}/): Location et personnalisation de machines à pince, gashapons, jeux d'arcade et distributeurs de cadeaux pour salons, pop-up et événements de marque, partout en France.
+- [Location]({H}/location/): Toutes nos machines en location : 73 jeux, machines à pince, gashapons, distributeurs, bornes d’arcade et photobooths, livrés et installés en Île-de-France.
+- [Réalisations]({H}/realisations/): Machines à pince, gashapons, distributeurs et cabines personnalisés pour des salons, pop-up et lancements : 49 réalisations pour les marques, avec photos et vidéos.
+- [Personnalisation]({H}/personnalisation/): Machines à pince, gashapons, distributeurs et cabines habillés aux couleurs de votre marque : vous créez le visuel, nous imprimons, installons et reprenons.
+- [Gabarits de personnalisation]({H}/personnalisation/gabarits/): Téléchargez le gabarit de personnalisation de votre machine à pince, gashapon ou distributeur : zones, dimensions et consignes d’impression, au même format pour toutes nos machines.
+- [Guides]({H}/guides/): Guides pratiques pour louer une machine à pince ou un gashapon : personnalisation, choix du modèle, animation de stand de salon, délais et livraison.
+- [Questions fréquentes]({H}/faq/): Toutes les réponses sur la location de machines à pince, gashapons, distributeurs et jeux d’arcade personnalisés : devis, livraison, personnalisation, lots, jetons et capsules.
+- [Qui sommes-nous]({H}/qui-sommes-nous/): Station Arcade loue et personnalise machines à pince, gashapons et jeux d'arcade pour les événements de marque. Basée à Livry-Gargan, en Île-de-France et partout en France.
+- [Demande de devis]({H}/devis/): Demandez un devis pour une ou plusieurs machines : dates, lieu et personnalisation.
+- [Contact]({H}/contact/): Contactez Station Arcade : téléphone, e-mail et demande de devis pour la location de machines à pince, gashapons et jeux d’arcade.
+
+## Catégories de location
+- [Machines à pince et gashapons]({H}/location/machines-a-pince-et-gashapons/): Machines à pince et gashapons en location pour salons, pop-up et événements de marque : habillage à vos couleurs, gain réglable, capsules surprises, livraison et installation.
+- [Distributeurs de cadeaux]({H}/location/distributeurs-de-cadeaux/): Distributeur automatique, gashapon, cabine à billets, cash machine, machine à sous : des distributeurs de cadeaux à vos couleurs pour salons et lancements.
+- [Jeux d'arcade et simulateurs]({H}/location/jeux-arcade-et-simulateurs/): Machine à coup de poing, bornes d'arcade, air hockey, baby-foot, simulateurs et rodéo en location pour vos soirées et événements, livrés et installés.
+- [Jeux pour enfants]({H}/location/jeux-pour-enfants/): Bornes Kids Rocket et Kids Robot, tape-taupe, tir à billes, simulateur et manège pour enfants en location pour anniversaires, kermesses et arbres de Noël.
+- [Photo et vidéo]({H}/location/photobooth-cabine-photo/): Cabine photo, photobooth, photobooth miroir et vidéobooth 360° en location, avec tirages personnalisés aux couleurs de votre événement, en Île-de-France.
+
+## Machines en location
+- [Machine à pince Néon]({H}/produit/machine-a-pince/): Location machine à pince Néon personnalisée : gain réglable, jeu payant ou gratuit pour vos invités. Livraison et installation en Île-de-France.
+- [Machine à pince Color]({H}/produit/machine-a-pince-color/): Location machine à pince Color : néons à vos couleurs et cadeaux à votre image pour salons et lancements. Livraison et installation en Île-de-France.
+- [Machine à pince Deluxe]({H}/produit/machine-a-pince-deluxe/): Location machine à pince Deluxe : rendu soigné, néon en 7 couleurs et habillage à votre marque. Livraison et installation en Île-de-France.
+- [Machine à pince Slim]({H}/produit/machine-a-pince-slim/): Location machine à pince Slim : format compact de 60 × 60 cm pour stands et boutiques, habillée à votre marque. Livraison et installation en Île-de-France.
+- [Machine à pince Cube]({H}/produit/machine-a-pince-cube/): Location machine à pince Cube : un jeu coloré et lumineux pour vos soirées, mariages et anniversaires. Livraison et installation en Île-de-France.
+- [Machine à pince XXL]({H}/produit/machine-a-pince-geante-xxl/): Location machine à pince XXL : 2,10 m de haut pour attirer les regards sur un salon, habillage à vos couleurs. Livraison et installation en Île-de-France.
+- [Machine à pince Double]({H}/produit/machine-a-pince-double/): Location machine à pince Double : deux joueurs en même temps et un écran LCD pour diffuser votre logo. Livraison et installation en Île-de-France.
+- [Gashapon Candyball]({H}/produit/gashapon-candyball/): Location gashapon Candyball : distributeur géant de 600 capsules surprises aux couleurs de votre marque. Livraison et installation en Île-de-France.
+- [Gashapon La Sphère]({H}/produit/gashapon-la-sphere/): Location gashapon La Sphère : capsules surprises et habillage à votre marque pour animer votre stand. Livraison et installation en Île-de-France.
+- [Gashapon XXL]({H}/produit/machine-gashapon-xxl/): Location gashapon XXL : 2,10 m de haut et jusqu'à 900 capsules surprises aux couleurs de votre marque. Livraison et installation en Île-de-France.
+- [Gashapon Cabine Capsule]({H}/produit/capsule-toy-station/): Location gashapon Cabine Capsule : vitré sur 4 côtés et 100 % gagnant pour attirer du monde sur votre stand. Livraison et installation en Île-de-France.
+- [Gashapon Box 360°]({H}/produit/gashapon-box-360/): Location gashapon Box 360° : vos goodies visibles sous tous les angles et une capsule à chaque essai. Livraison et installation en Île-de-France.
+- [Gashapon Cup]({H}/produit/gashapon-cup/): Location gashapon Cup : petits cadeaux surprises en capsules de la couleur de votre choix, à vos couleurs. Livraison et installation en Île-de-France.
+- [Gashapon Cône]({H}/produit/gashapon-cone/): Location gashapon Cône : distributeur de capsules étroit pour stands et boutiques, habillé à vos couleurs. Livraison et installation en Île-de-France.
+- [Distributeur automatique]({H}/produit/distributeur-automatique/): Location distributeur automatique : boissons, beauté ou goodies en libre-service, habillé à vos couleurs. Livraison et installation en Île-de-France.
+- [Cabine à billets]({H}/produit/money-storm/): Location cabine à billets : billets et bons d'achat soufflés à attraper avant la fin du chrono, à vos couleurs. Livraison et installation en Île-de-France.
+- [Cash Machine]({H}/produit/cash-machine-a-billets/): Location Cash Machine : billets à attraper en temps limité pour vos jeux-concours, habillée à vos couleurs. Livraison et installation en Île-de-France.
+- [Machine à sous]({H}/produit/machine-a-sous/): Location machine à sous : vos produits à l'écran, plus de 10 lots et un taux de gain réglable pour votre stand. Livraison et installation en Île-de-France.
+- [Machine à coup de marteau]({H}/produit/machine-coup-de-marteau/): Location machine à coup de marteau : un défi de force pour vos soirées, avec un marteau à vos couleurs. Livraison et installation en Île-de-France.
+- [Machine coup de poing]({H}/produit/machine-coup-de-poing/): Location machine coup de poing : jeu de force forain où chaque frappe sur le boxer donne un score affiché. Livraison et installation en Île-de-France.
+- [Machine coup de pied]({H}/produit/machine-coup-de-pied/): Location machine coup de pied : frappez le ballon et voyez votre score aussitôt, en parties rapides. Livraison et installation en Île-de-France.
+- [Machine MMA]({H}/produit/mma/): Location machine MMA : une borne d'arcade arts martiaux pour mettre vos invités en compétition. Livraison et installation en Île-de-France.
+- [Basket-ball LED]({H}/produit/basket-arcade-led/): Location basket-ball LED : panier d'arcade à 1 ou 2 joueurs, habillé aux couleurs de votre marque. Livraison et installation en Île-de-France.
+- [Catch the Light]({H}/produit/catch-the-light/): Location Catch the Light : une table de réflexes à 1 ou 2 joueurs pour anniversaires et événements. Livraison et installation en Île-de-France.
+- [Jeu de réaction Batak]({H}/produit/jeu-de-reaction-batak/): Location jeu de réaction Batak : réflexes et coordination mis à l'épreuve, habillage à votre marque. Livraison et installation en Île-de-France.
+- [Sticks réaction]({H}/produit/jeu-sticks-reaction/): Location Sticks réaction personnalisé : un jeu de réflexes à vos couleurs pour animer votre stand. Livraison et installation en Île-de-France.
+- [Beeper spirale]({H}/produit/jeu-beeper-spirale/): Location Beeper spirale personnalisé : un jeu d’adresse à vos couleurs pour attirer le public sur votre stand. Livraison et installation en Île-de-France.
+- [Borne Arcade 3000 26″]({H}/produit/borne-arcade-3000-26/): Location borne Arcade 3000 26″ : 3 000 jeux rétro et modernes à deux joueurs pour animer votre soirée. Livraison et installation en Île-de-France.
+- [Borne Fight 32″]({H}/produit/borne-fight-32/): Location borne Fight 32″ : 300 jeux, dont de nombreux jeux de combat, pour des duels entre invités. Livraison et installation en Île-de-France.
+- [Borne Mortal Kombat 32″]({H}/produit/borne-mortal-kombat-32/): Location borne Mortal Kombat 32″ personnalisée : le jeu de combat culte à vos couleurs pour des duels rétro. Livraison et installation en Île-de-France.
+- [Borne Pac-Man 19″]({H}/produit/borne-pac-man-19/): Location borne Pac-Man 19″ : le jeu culte en version arcade pour un défi au meilleur score entre invités. Livraison et installation en Île-de-France.
+- [Pac-Man baril adulte 19″]({H}/produit/pacman-baril-adulte-19/): Location Pac-Man baril adulte 19″ : une borne rétro originale pour jouer à deux autour d’un baril. Livraison et installation en Île-de-France.
+- [Table cocktail Pac-Man]({H}/produit/table-cocktail-pacman/): Location table cocktail Pac-Man : le jeu culte intégré à une table basse pour jouer à deux face à face. Livraison et installation en Île-de-France.
+- [Shoot Alien]({H}/produit/shoot-alien/): Location Shoot Alien : un simulateur de tir à deux sur écran 42 pouces pour une animation en équipe. Livraison et installation en Île-de-France.
+- [Simulateur Out Run]({H}/produit/simulateur-out-run/): Location simulateur Out Run : une borne de course pour que vos invités se défient au volant, un par un. Livraison et installation en Île-de-France.
+- [Air hockey adulte]({H}/produit/air-hockey-adulte/): Location air hockey adulte : une table format salle de jeux pour des duels rapides de 2 à 4 joueurs. Livraison et installation en Île-de-France.
+- [Air hockey incurvé]({H}/produit/air-hockey-incurve/): Location air hockey incurvé : une piste en vague qui dévie le palet pour des parties plus imprévisibles. Livraison et installation en Île-de-France.
+- [Baby-foot Classic]({H}/produit/baby-foot-classic/): Location baby-foot Classic personnalisé : un baby-foot bistrot à vos couleurs pour vos tournois. Livraison et installation en Île-de-France.
+- [Baby-foot Duel]({H}/produit/baby-foot-duel/): Location baby-foot Duel : un baby-foot compact pour des parties en face à face à deux joueurs. Livraison et installation en Île-de-France.
+- [Baby-foot XXL]({H}/produit/baby-foot-xxl/): Location baby-foot XXL : un baby-foot géant de 4 à 8 joueurs pour des matchs en équipe entre invités. Livraison et installation en Île-de-France.
+- [Subsoccer adulte]({H}/produit/subsoccer-adulte/): Location Subsoccer adulte personnalisé : un jeu de foot à deux à vos couleurs pour des matchs rapides. Livraison et installation en Île-de-France.
+- [Billard]({H}/produit/billard/): Location billard : une table pour des parties détendues entre invités ou un tournoi, de 1 à 4 joueurs. Livraison et installation en Île-de-France.
+- [Table de ping-pong]({H}/produit/ping-pong/): Location table de ping-pong personnalisée : à vos couleurs, en intérieur ou dehors, raquettes fournies. Livraison et installation en Île-de-France.
+- [Cible de fléchettes électronique]({H}/produit/flechettes-electroniques/): Location cible de fléchettes électronique : un défi de précision jusqu’à 8 joueurs pour vos salons. Livraison et installation en Île-de-France.
+- [Mini-golf 9 trous]({H}/produit/mini-golf/): Location mini-golf 9 trous : un parcours avec obstacles pour petits et grands, en intérieur ou dehors. Livraison et installation en Île-de-France.
+- [Combat de sumo adulte]({H}/produit/sumo-adulte/): Location combat de sumo adulte : costumes et aire de 4 × 4 m pour des duels amicaux pleins d’humour. Livraison et installation en Île-de-France.
+- [Simulateur de conduite 360°]({H}/produit/simulateur-conduite-360/): Location simulateur de conduite 360° : moteur rotatif et vérins pour piloter en rallye ou en F1. Livraison et installation en Île-de-France.
+- [Shooting VR]({H}/produit/shooting-vr/): Location Shooting VR : une borne de tir en réalité virtuelle avec casque intégré pour enfants et ados. Livraison et installation en Île-de-France.
+- [Rodéo mécanique]({H}/produit/rodeo-mecanique/): Location rodéo mécanique : un taureau sur une aire de 5 m pour un défi d’équilibre qui attire le public. Livraison et installation en Île-de-France.
+- [Surf mécanique]({H}/produit/surf-mecanique/): Location surf mécanique : une planche qui imite la vague pour un défi d’équilibre devant le public. Livraison et installation en Île-de-France.
+- [Snowboard mécanique]({H}/produit/snowboard-mecanique/): Location snowboard mécanique : un défi d’équilibre sans neige pour enfants et adultes, 1 joueur à la fois. Livraison et installation en Île-de-France.
+- [Cabine photo]({H}/produit/cabine-photo/): Location cabine photo personnalisée : impression instantanée, habillage à vos couleurs, jetons ou mode gratuit. Livraison et installation en Île-de-France.
+- [Photobooth]({H}/produit/photobooth-borne/): Location photobooth personnalisé avec animateur sur place, tirages illimités et photos envoyées sous 24 à 48 h. Livraison et installation en Île-de-France.
+- [Photobooth miroir]({H}/produit/photobooth-miroir/): Location photobooth miroir personnalisé : borne interactive, animateur sur place, tirages illimités. Livraison et installation en Île-de-France.
+- [Vidéobooth 360°]({H}/produit/360-videobooth/): Location vidéobooth 360° : vos invités filmés à 360 degrés avec des effets spéciaux en direct. Livraison et installation en Île-de-France.
+- [Pack Kids Rocket (4 bornes)]({H}/produit/kids-rocket-pack/): Location pack Kids Rocket : 4 bornes de jeu pour enfants, 4 jeux différents dans un format compact et sécurisé. Livraison et installation en Île-de-France.
+- [Pack Kids Robot (4 bornes)]({H}/produit/kids-robot-pack/): Location pack Kids Robot : 4 bornes de jeu pour enfants, dont un simulateur de voiture jouable à deux. Livraison et installation en Île-de-France.
+- [Kids Rocket Fishing]({H}/produit/kids-rocket-fishing/): Location Kids Rocket Fishing : une borne de jeu compacte et sécurisée pour enfants, 1 joueur à la fois. Livraison et installation en Île-de-France.
+- [Kids Rocket Lucky]({H}/produit/kids-rocket-lucky/): Location Kids Rocket Lucky : borne de jeu pour enfants au design sécurisé, compacte et légère avec ses 25 kg. Livraison et installation en Île-de-France.
+- [Kids Rocket Plane]({H}/produit/kids-rocket-plane/): Location Kids Rocket Plane : borne de jeu pour enfants au format compact, 1 joueur à la fois, sur 220 V. Livraison et installation en Île-de-France.
+- [Kids Rocket Temple]({H}/produit/kids-rocket-temple/): Location Kids Rocket Temple : borne de jeu pour enfants légère et compacte, pour un coin jeux à leur taille. Livraison et installation en Île-de-France.
+- [Pac-Man baril enfant 19″]({H}/produit/pacman-baril-enfant/): Location Pac-Man baril enfant 19″ : borne d’arcade au format baril pour jouer à deux face à face. Livraison et installation en Île-de-France.
+- [Simulateur de conduite enfant]({H}/produit/simulateur-enfant/): Location simulateur de conduite enfant : choix de véhicules et de circuits pour les petits pilotes. Livraison et installation en Île-de-France.
+- [Shooting VR enfant]({H}/produit/shooting-vr-enfant/): Location shooting VR enfant : tir en réalité virtuelle avec casque intégré et écran 55 pouces, modes enfants. Livraison et installation en Île-de-France.
+- [Basket-ball enfant]({H}/produit/basket-ball-enfant/): Location basket-ball enfant : borne de tirs au panier à jouer seul ou à deux, au design sécurisé. Livraison et installation en Île-de-France.
+- [Air hockey Petit Champion]({H}/produit/air-hockey-petit-champion/): Location air hockey Petit Champion : mini air hockey pour deux enfants, au format réduit et sécurisé. Livraison et installation en Île-de-France.
+- [Subsoccer enfant]({H}/produit/subsoccer-enfant/): Location Subsoccer enfant : un match de foot en face à face pour deux joueurs, accessible dès 8 ans. Livraison et installation en Île-de-France.
+- [Tape-grenouille]({H}/produit/tape-grenouille/): Location tape-grenouille : un jeu de rapidité où l’on tape les grenouilles pour enfants, compact et léger avec ses 35 kg. Livraison et installation en Île-de-France.
+- [Tape-taupe double]({H}/produit/tape-taupe-double/): Location tape-taupe double : deux joueurs s’affrontent en duel pour taper les taupes le plus vite. Livraison et installation en Île-de-France.
+- [Tir à billes]({H}/produit/tir-a-billes/): Location tir à billes : un jeu de tir sur écran interactif pour enfants, à pratiquer seul ou à deux. Livraison et installation en Île-de-France.
+- [Jeu du jet d'eau]({H}/produit/jet-deau/): Location jeu du jet d’eau : tir au pistolet à eau sur écran interactif pour enfants, à 1 ou 2 joueurs. Livraison et installation en Île-de-France.
+- [Combat de sumo enfant]({H}/produit/sumo-enfant/): Location combat de sumo enfant : costumes de sumo et duels amicaux sur un espace de 4 × 4 m, pour vos fêtes. Livraison et installation en Île-de-France.
+- [Manège P’tits Bouts]({H}/produit/manege-ptits-bouts-voitures/): Location manège P’tits Bouts : 8 voitures colorées pour enfants, démontable, en intérieur ou en extérieur. Livraison et installation en Île-de-France.
+
+## Guides
+- [Comment personnaliser une machine à pince pour un événement de marque]({H}/guides/personnaliser-machine-a-pince-evenement-marque/): Habillage, couleur du néon, réglage du gain, lots : comment se passe la personnalisation d'une machine à pince pour un salon ou un pop-up, étape par étape.
+- [Machine à pince ou gashapon : laquelle choisir pour votre événement ?]({H}/guides/machine-a-pince-ou-gashapon/): Jeu d'adresse ou capsule surprise 100 % gagnante : ce qui distingue machine à pince et gashapon pour un salon, un pop-up ou une boutique, exemples à l'appui.
+- [Animer un stand de salon avec un jeu d'arcade personnalisé]({H}/guides/animation-stand-salon-jeu-arcade/): Machine à pince, gashapon ou cabine à billets aux couleurs de votre marque : comment attirer les visiteurs sur votre stand, avec des exemples de salons à Paris.
+- [Gashapon personnalisé en boutique et pop-up store]({H}/guides/gashapon-personnalise-boutique-pop-up/): Un gashapon aux couleurs de votre marque pour une boutique, un pop-up ou une soirée presse : choix du modèle, durée de location et exemples Lancel, Erborian.
+- [Louer une machine à pince ou un gashapon : délais, livraison et déroulé]({H}/guides/location-jeux-arcade-evenement-deroule/): Demande de devis, visuel à J-10, livraison, installation et reprise : comment se déroule la location d'une machine à pince, d'un gashapon ou d'un jeu d'arcade.
+
+## Réalisations par secteur
+- [Beauté et parfum]({H}/realisations/secteur/beaute/): Machines à pince, gashapons et créations sur mesure pour les lancements, pop-up et soirées des marques de beauté et de parfum : Sephora, Huda Beauty, Clinique…
+- [Mode, luxe et accessoires]({H}/realisations/secteur/mode/): Gashapons en boutique, machines à pince et distributeurs sur mesure pour les marques de mode et de luxe : Lancel, Caroll, Damart, Zalando, Revolve, Cabaia.
+- [Sport]({H}/realisations/secteur/sport/): Machines à pince, basket arcade, coup de marteau et distributeurs personnalisés pour les marques et événements sportifs : Adidas, Thuasne, Prix d'Amérique.
+- [Médias, divertissement et jeu vidéo]({H}/realisations/secteur/medias/): Gashapons XXL, machines à pince, cabines photo et distributeurs pour les médias, studios et éditeurs de jeu vidéo : Riot Games, Crunchyroll, Banijay, M6, Hayu.
+- [Automobile]({H}/realisations/secteur/auto/): Machine à pince Citroën au Mondial de l'Auto, bornes d'arcade pour Porsche au Bourget : des jeux personnalisés pour les salons et showrooms automobiles.
+- [Entreprises, tech et finance]({H}/realisations/secteur/entreprises/): Machines à pince et machines à sous personnalisées pour les salons professionnels et congrès : Dext à l'Ordre des experts-comptables, Swile au Salon CSE, Tiime.
+- [Alimentaire, restauration et grande consommation]({H}/realisations/secteur/food/): Machines à pince, gashapons et photobooths pour les marques alimentaires, de restauration et de grande consommation : Ben & Jerry's, Magnum, Wingstop, Stanley.
+
+## Optional
+- Les études de cas détaillées d'événements de marque (Sephora, Porsche, Citroën, Huda Beauty, Riot Games…) sont listées sur la page Réalisations.
+- [Mentions légales]({H}/mentions-legales/)
+- [Politique de confidentialité]({H}/confidentialite/)
+LLMS_TXT;
+		header('Content-Type: text/plain; charset=utf-8');
+		header('X-Robots-Tag: noindex');
+		echo str_replace('{H}', untrailingslashit(home_url()), $texte);
+		exit;
+	}
+}, 0);
+add_action('template_redirect', function () {
+	if (!is_page()) return;
+	$cibles = ['produit' => '/location/', 'realisations/secteur' => '/realisations/'];
+	$p = get_queried_object();
+	if (!$p) return;
+	$uri = get_page_uri($p);
+	if (isset($cibles[$uri])) { wp_redirect(home_url($cibles[$uri]), 301); exit; }
+}, 2);
+add_filter('wpseo_exclude_from_sitemap_by_post_ids', function ($ids) {
+	foreach (['produit', 'realisations/secteur'] as $c) { $p = get_page_by_path($c); if ($p) $ids[] = $p->ID; }
+	return $ids;
+});
