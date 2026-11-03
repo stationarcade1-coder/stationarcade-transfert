@@ -1,4 +1,4 @@
-(function(){
+document.addEventListener('DOMContentLoaded',function(){(function(){
 var $=function(s){return document.querySelector(s)},P=window.SA_PRODS||{},jeton='';
 function esc(s){return String(s).replace(/[<>"&]/g,function(c){return {'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]})}
 fetch('/wp-json/sa/v1/devis/jeton',{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){jeton=j.jeton}).catch(function(){});
@@ -25,3 +25,4 @@ f.addEventListener('submit',function(e){e.preventDefault();if(envoi)return;er.hi
    Object.keys(SA.devis()).forEach(function(k){SA.set(k,0)});document.dispatchEvent(new CustomEvent('sa-devis-envoye',{detail:{ref:x.j.ref}}))}
   else throw new Error((x.j&&x.j.message)||'Erreur '+x.s)}).catch(function(err){er.textContent=(err&&err.message&&err.message.indexOf('Failed')<0?err.message:'La demande n’a pas pu être envoyée.')+' Vous pouvez aussi nous appeler au 06 29 72 90 92.';er.hidden=false;envoi=false;btn.disabled=false;btn.textContent='Envoyer ma demande'})});
 })();
+});
