@@ -16,7 +16,7 @@ Points clés :
 
 ## Pages principales
 - [Accueil]({H}/): Location et personnalisation de machines à pince, gashapons, jeux d'arcade et distributeurs de cadeaux pour salons, pop-up et événements de marque, partout en France.
-- [Location]({H}/location/): Toutes nos machines en location : 73 jeux, machines à pince, gashapons, distributeurs, bornes d’arcade et photobooths, livrés et installés en Île-de-France.
+- [Location]({H}/location/): Toutes nos machines en location : 74 jeux, machines à pince, gashapons, distributeurs, bornes d’arcade et photobooths, livrés et installés en Île-de-France.
 - [Réalisations]({H}/realisations/): Machines à pince, gashapons, distributeurs et cabines personnalisés pour des salons, pop-up et lancements : 49 réalisations pour les marques, avec photos et vidéos.
 - [Personnalisation]({H}/personnalisation/): Machines à pince, gashapons, distributeurs et cabines habillés aux couleurs de votre marque : vous créez le visuel, nous imprimons, installons et reprenons.
 - [Gabarits de personnalisation]({H}/personnalisation/gabarits/): Téléchargez le gabarit de personnalisation de votre machine à pince, gashapon ou distributeur : zones, dimensions et consignes d’impression, au même format pour toutes nos machines.
@@ -76,6 +76,7 @@ Points clés :
 - [Baby-foot XXL]({H}/produit/baby-foot-xxl/): Location baby-foot XXL : un baby-foot géant de 4 à 8 joueurs pour des matchs en équipe entre invités. Livraison et installation en Île-de-France.
 - [Subsoccer adulte]({H}/produit/subsoccer-adulte/): Location Subsoccer adulte personnalisé : un jeu de foot à deux à vos couleurs pour des matchs rapides. Livraison et installation en Île-de-France.
 - [Billard]({H}/produit/billard/): Location billard : une table pour des parties détendues entre invités ou un tournoi, de 1 à 4 joueurs. Livraison et installation en Île-de-France.
+- [Flipper]({H}/produit/flipper/): Location flipper : un flipper moderne pour des parties de 1 à 4 joueurs et un défi du meilleur score. Livraison et installation en Île-de-France.
 - [Table de ping-pong]({H}/produit/ping-pong/): Location table de ping-pong personnalisée : à vos couleurs, en intérieur ou dehors, raquettes fournies. Livraison et installation en Île-de-France.
 - [Cible de fléchettes électronique]({H}/produit/flechettes-electroniques/): Location cible de fléchettes électronique : un défi de précision jusqu’à 8 joueurs pour vos salons. Livraison et installation en Île-de-France.
 - [Mini-golf 9 trous]({H}/produit/mini-golf/): Location mini-golf 9 trous : un parcours avec obstacles pour petits et grands, en intérieur ou dehors. Livraison et installation en Île-de-France.
