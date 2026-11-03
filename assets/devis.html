@@ -1,0 +1,51 @@
+<main class="view">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Fil d'Ariane"><a href="/">Accueil</a> › <span>Demande de devis</span></nav>
+    <div class="dv">
+      <aside class="panier" aria-labelledby="pan-t">
+        <h2 id="pan-t">Vos machines</h2>
+        <div id="pan-list"></div>
+        <div class="total" id="pan-total" hidden><span>Indicatif, hors livraison et personnalisation</span><b id="pan-sum"></b></div>
+        <p style="padding-top:14px"><a class="b-ligne" href="/location/">+ Ajouter une machine</a></p>
+      </aside>
+      <div>
+        <h1>Votre demande de devis</h1>
+        <p style="color:var(--doux);margin-bottom:26px">Quelques informations sur l'événement suffisent. Vous ne savez pas quelle machine choisir ? Décrivez votre projet, nous vous conseillons.</p>
+        <form class="fd" id="fd" novalidate>
+          <fieldset>
+            <legend>L'événement</legend>
+            <div class="f"><label for="d-date">Date de début</label><input id="d-date" name="date" type="date"></div>
+            <div class="f"><label for="d-jours">Durée</label><select id="d-jours" name="duree"><option>1 jour</option><option>2 jours</option><option>3 jours</option><option>4 à 7 jours</option><option>Plus d'une semaine</option></select></div>
+            <div class="f"><label for="d-lieu">Lieu (ville ou code postal)</label><input id="d-lieu" name="lieu" type="text" placeholder="Paris 8e, La Défense…"></div>
+            <div class="f"><label for="d-type">Type d'événement</label><select id="d-type" name="type"><option>Salon</option><option>Pop-up ou boutique</option><option>Lancement de produit</option><option>Soirée ou séminaire</option><option>Anniversaire ou fête privée</option><option>Autre</option></select></div>
+          </fieldset>
+          <fieldset>
+            <legend>Personnalisation</legend>
+            <div class="f full"><span class="lab" id="p-lab">Souhaitez-vous habiller les machines ?</span>
+              <div class="radios" role="radiogroup" aria-labelledby="p-lab">
+                <label><input type="radio" name="perso" value="Habillage complet" checked> Habillage complet</label>
+                <label><input type="radio" name="perso" value="Logo seulement"> Logo seulement</label>
+                <label><input type="radio" name="perso" value="Sans personnalisation"> Sans personnalisation</label>
+                <label><input type="radio" name="perso" value="À conseiller"> À conseiller</label>
+              </div>
+              <span class="h">Le visuel est à fournir au plus tard 10 jours avant l'événement. Tarif de la personnalisation sur devis.</span>
+            </div>
+            <div class="f full"><label for="d-msg">Votre projet en quelques mots</label><textarea id="d-msg" name="message" placeholder="Lots prévus, nombre de visiteurs attendus, contraintes d'accès…"></textarea></div>
+          </fieldset>
+          <fieldset>
+            <legend>Vos coordonnées</legend>
+            <div class="f"><label for="d-nom">Nom *</label><input id="d-nom" name="nom" type="text" autocomplete="name" required></div>
+            <div class="f"><label for="d-soc">Société ou agence</label><input id="d-soc" name="societe" type="text" autocomplete="organization"></div>
+            <div class="f"><label for="d-mail">E-mail *</label><input id="d-mail" name="email" type="email" autocomplete="email" required></div>
+            <div class="f"><label for="d-tel">Téléphone</label><input id="d-tel" name="tel" type="tel" autocomplete="tel"></div>
+            <div class="f" style="position:absolute;left:-9999px" aria-hidden="true"><label for="d-site">Site web</label><input id="d-site" name="site_web" type="text" tabindex="-1" autocomplete="off"></div>
+          </fieldset>
+          <p class="h" style="font-size:13px;color:var(--doux)">Vos informations servent uniquement à préparer votre devis. <a href="/confidentialite/" style="color:var(--cyan)">Politique de confidentialité</a>.</p>
+          <div><button class="b-jaune" type="submit" id="fd-btn">Envoyer ma demande</button></div>
+          <div class="err" id="fd-err" hidden role="alert" style="margin-top:14px;padding:12px 14px;border:1px solid #ff1c26;color:#fff;border-radius:4px"></div>
+          <div class="ok" id="fd-ok" hidden role="status" tabindex="-1"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
