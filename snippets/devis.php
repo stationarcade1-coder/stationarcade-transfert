@@ -116,17 +116,21 @@ function sa_devis_recevoir(WP_REST_Request $req) {
 		"Dates : $dates\nLieu : {$f['lieu']}\nPersonnalisation : {$f['perso']}\n\n" .
 		"Machines :\n$lignes\n\nMessage :\n{$f['message']}\n\nVoir dans l’administration : $admin_url";
 	$ok1 = sa_mail_envoyer(SA_DEVIS_DEST, "Nouvelle demande de devis $ref – {$f['nom']}" . ($f['societe'] ? " ({$f['societe']})" : ''), $html1, $corps, $f['nom'] . ' <' . $f['email'] . '>');
+	$gabs = $f['perso'] === 'Oui' ? sa_gabarits_pour($machines) : [];
+	$etape3 = $f['perso'] !== 'Oui' ? 'Si vous souhaitez personnaliser les machines, nous vous envoyons les gabarits : visuels à fournir au plus tard 10 jours avant l’événement.' : ($gabs ? 'Téléchargez dès maintenant vos gabarits ci-dessous : visuels à fournir au plus tard 10 jours avant l’événement.' : 'Nous vous envoyons les gabarits adaptés à vos machines : visuels à fournir au plus tard 10 jours avant l’événement.');
 	$html2 = sa_mail_html([
 		'pre' => "Nous avons bien reçu votre demande ($ref). Nous revenons vers vous rapidement.",
 		'kick' => 'Demande bien reçue', 'titre' => 'Merci ' . esc_html($f['nom']) . ' !', 'intro' => 'Nous avons bien reçu votre demande de devis. Notre équipe l’étudie et revient vers vous rapidement avec une proposition détaillée.<br><br><span style="display:inline-block;border:2px solid #ffd900;color:#ffd900;font-weight:700;padding:6px 12px;border-radius:3px;letter-spacing:.04em">Référence ' . esc_html($ref) . '</span>',
 		'blocs' => [['Votre événement', $infos]],
 		'machines' => $machines, 'message' => $f['message'],
-		'etapes' => ['Nous étudions votre demande et vérifions la disponibilité des machines.', 'Vous recevez votre devis détaillé, livraison et installation comprises.', 'Si vous personnalisez, nous vous envoyons les gabarits : visuels à fournir au plus tard 10 jours avant l’événement.'],
+		'etapes' => ['Nous étudions votre demande et vérifions la disponibilité des machines.', 'Vous recevez votre devis détaillé, livraison et installation comprises.', $etape3],
+		'perso' => $f['perso'] === 'Oui', 'gabarits' => $gabs,
 		'boutons' => [['Nous appeler : 06 29 72 90 92', 'tel:+33629729092', true], ['Voir nos réalisations', home_url('/realisations/'), false]],
 		'pied' => 'Une question ? Répondez simplement à cet e-mail ou écrivez à <a href="mailto:contact@stationarcade.fr" style="color:#00e1d4">contact@stationarcade.fr</a>.',
 	]);
 	$conf = "Bonjour {$f['nom']},\n\nNous avons bien reçu votre demande de devis (référence $ref).\n" .
 		"Nous revenons vers vous rapidement avec une proposition détaillée.\n\nVotre sélection :\n$lignes\n\n" .
+		($gabs ? "Vos gabarits de personnalisation :\n" . implode("\n", array_map(function ($g) { return '- ' . $g[0] . ' : ' . $g[1]; }, $gabs)) . "\n\n" : '') .
 		"Pour toute question : 06 29 72 90 92 ou contact@stationarcade.fr\n\nL’équipe Station Arcade";
 	$ok2 = sa_mail_envoyer($f['email'], "Votre demande de devis Station Arcade ($ref)", $html2, $conf, 'Station Arcade <' . SA_DEVIS_DEST . '>');
 	update_post_meta($id, '_sa_mail_entreprise', $ok1 ? 1 : 0);
@@ -167,6 +171,25 @@ add_action('manage_sa_devis_posts_custom_column', function ($col, $id) {
 
 
 // Mise en page des e-mails (HTML compatible messageries, version texte jointe)
+function sa_gabarits_pour($machines) {
+	$b = content_url('uploads/2026/11/Station-Arcade_Gabarit_');
+	$t = [
+		'machine-a-pince' => [['Machine à pince Néon rose', 'Machine-a-pince-Neon'], ['Machine à pince Néon jaune', 'Machine-a-pince-Neon-jaune']],
+		'machine-a-pince-color' => [['Machine à pince Color', 'Machine-a-pince-Color']],
+		'machine-a-pince-deluxe' => [['Machine à pince Deluxe', 'Machine-a-pince-Deluxe']],
+		'gashapon-candyball' => [['Gashapon Candyball', 'Gashapon-Candyball']],
+		'gashapon-cabine-capsule' => [['Gashapon Cabine Capsule', 'Gashapon-Cabine-Capsule']],
+		'cabine-a-billets' => [['Cabine à billets', 'Cabine-a-billets']],
+		'borne-mortal-kombat-32' => [['Borne Mortal Kombat 32″', 'Borne-arcade-Mortal-Kombat']],
+	];
+	$out = [];
+	foreach ($machines as $m) {
+		if (empty($t[$m['id']])) continue;
+		foreach ($t[$m['id']] as $g) $out[$g[1]] = [$g[0], $b . $g[1] . '_2026-11.pdf'];
+	}
+	return array_values($out);
+}
+
 function sa_mail_envoyer($a, $sujet, $html, $texte, $reply) {
 	$alt = function ($m) use ($texte) { $m->AltBody = $texte; };
 	add_action('phpmailer_init', $alt);
@@ -210,6 +233,14 @@ function sa_mail_html($o) {
 	if (!empty($o['etapes'])) {
 		$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#ffffff">La suite</p>';
 		foreach ($o['etapes'] as $i => $s) $h .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:8px"><tr><td valign="top" style="width:30px"><span style="display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:#00e1d4;color:#000028;font-size:12px;font-weight:700;text-align:center">' . ($i + 1) . '</span></td><td style="font-size:14px;line-height:1.5;color:#c9cbe6">' . $e($s) . '</td></tr></table>';
+		$h .= '</td></tr>';
+	}
+	if (!empty($o['perso'])) {
+		$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 6px;font-size:16px;font-weight:700;color:#ffffff">Vos gabarits de personnalisation</p>';
+		if (!empty($o['gabarits'])) {
+			$h .= '<p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#c9cbe6">Fichiers PDF à remettre à votre graphiste, avec les consignes d’impression.</p>';
+			foreach ($o['gabarits'] as $g) $h .= '<a href="' . esc_url($g[1]) . '" style="display:inline-block;margin:0 8px 10px 0;padding:10px 16px;border-radius:3px;font-weight:700;font-size:13px;text-decoration:none;border:2px solid #00e1d4;color:#00e1d4">Gabarit ' . esc_html($g[0]) . ' (PDF)</a>';
+		} else $h .= '<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#c9cbe6">Retrouvez tous nos gabarits sur <a href="' . esc_url(home_url('/personnalisation/gabarits/')) . '" style="color:#00e1d4">la page Gabarits</a> ; nous vous confirmons ceux de vos machines avec le devis.</p>';
 		$h .= '</td></tr>';
 	}
 	$h .= '<tr><td style="padding:24px 28px 26px;font-size:13px;line-height:1.6;color:#a7a9cc">' . $o['pied'] . '</td></tr>';
