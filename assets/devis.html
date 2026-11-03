@@ -26,6 +26,23 @@
             <div class="f full"><label class="chk"><input type="checkbox" name="perso" value="Oui"> Oui, je souhaite personnaliser les machines</label>
               <span class="h">Le visuel est à fournir au plus tard 10 jours avant l'événement. Tarif de la personnalisation sur devis.</span>
             </div>
+            <div class="f full"><label for="d-msg">Votre projet en quelques mots</label><textarea id="d-msg" name="message" style="min-height:135px" placeholder="Lots prévus, nombre de visiteurs attendus, contraintes d'accès…"></textarea></div>
+          </fieldset>
+          <fieldset>
+            <legend>Vos coordonnées</legend>
+            <div class="f"><label for="d-nom">Nom *</label><input id="d-nom" name="nom" type="text" autocomplete="name" required></div>
+            <div class="f"><label for="d-soc">Société ou agence</label><input id="d-soc" name="societe" type="text" autocomplete="organization"></div>
+            <div class="f"><label for="d-mail">E-mail *</label><input id="d-mail" name="email" type="email" autocomplete="email" required></div>
+            <div class="f"><label for="d-tel">Téléphone *</label><input id="d-tel" name="tel" type="tel" autocomplete="tel" required></div>
+            <div class="f" style="position:absolute;left:-9999px" aria-hidden="true"><label for="d-site">Site web</label><input id="d-site" name="site_web" type="text" tabindex="-1" autocomplete="off"></div>
+          </fieldset>
+          <p class="h" style="font-size:13px;color:var(--doux)">Vos informations servent uniquement à préparer votre devis. <a href="/confidentialite/" style="color:var(--cyan)">Politique de confidentialité</a>.</p>
+          <div><button class="b-jaune" type="submit" id="fd-btn">Envoyer ma demande</button></div>
+          <div class="err" id="fd-err" hidden role="alert" style="margin-top:14px;padding:12px 14px;border:1px solid #ff1c26;color:#fff;border-radius:4px"></div>
+          <div class="ok" id="fd-ok" hidden role="status" tabindex="-1"></div>
+        </form>
+      </div>
+    </div>
   </div>
 <style>
 .cal{max-width:340px;background:var(--nuit3);border:1px solid rgba(255,255,255,.22);border-radius:4px;padding:12px;margin-top:6px}
