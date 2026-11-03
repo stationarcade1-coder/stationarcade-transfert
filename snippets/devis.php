@@ -75,7 +75,10 @@ function sa_devis_recevoir(WP_REST_Request $req) {
 			$id = isset($m['id']) ? sanitize_key($m['id']) : '';
 			$q = isset($m['q']) ? max(1, min(50, (int) $m['q'])) : 1;
 			$nom = isset($m['nom']) ? mb_substr(sanitize_text_field($m['nom']), 0, 120) : $id;
-			if ($id !== '') $machines[] = ['id' => $id, 'q' => $q, 'nom' => $nom];
+			$img = isset($m['img']) ? esc_url_raw($m['img']) : '';
+			if ($img && strpos($img, content_url('uploads/')) !== 0) $img = '';
+			$url = isset($m['url']) ? esc_url_raw(home_url($m['url'])) : '';
+			if ($id !== '') $machines[] = ['id' => $id, 'q' => $q, 'nom' => $nom, 'img' => $img, 'url' => $url];
 		}
 	}
 
@@ -96,16 +99,36 @@ function sa_devis_recevoir(WP_REST_Request $req) {
 	set_transient($cle, $n + 1, HOUR_IN_SECONDS);
 
 	$lignes = $machines ? implode("\n", array_map(function ($m) { return '- ' . $m['nom'] . ' × ' . $m['q']; }, $machines)) : '- Aucune machine choisie (conseil souhaité)';
+	$infos = [['Dates', $dates], ['Lieu', $f['lieu'] ?: 'Non précisé'], ['Personnalisation', $f['perso'] === 'Oui' ? 'Oui, machines à habiller' : 'Non']];
+	$coord = [['Nom', $f['nom']], ['Société', $f['societe'] ?: '—'], ['E-mail', $f['email']], ['Téléphone', $f['tel']]];
+	$admin_url = admin_url('post.php?post=' . $id . '&action=edit');
+	$tel_client = preg_replace('/[^0-9+]/', '', $f['tel']);
+	$html1 = sa_mail_html([
+		'pre' => "Nouvelle demande $ref de {$f['nom']}",
+		'kick' => 'Nouvelle demande de devis', 'titre' => $ref, 'intro' => esc_html($f['nom']) . ($f['societe'] ? ' · ' . esc_html($f['societe']) : '') . ' vient d’envoyer une demande depuis le site.',
+		'boutons' => [['Répondre au client', 'mailto:' . $f['email'] . '?subject=' . rawurlencode("Votre devis Station Arcade ($ref)"), true], ['Appeler ' . $f['tel'], 'tel:' . $tel_client, false]],
+		'blocs' => [['L’événement', $infos], ['Le client', $coord]],
+		'machines' => $machines, 'message' => $f['message'],
+		'pied' => '<a href="' . esc_url($admin_url) . '" style="color:#00e1d4">Ouvrir la demande dans WordPress</a> pour changer son statut.<br>Page d’origine : ' . esc_html($f['page']),
+	]);
 	$corps = "Nouvelle demande de devis $ref\n\n" .
 		"Nom : {$f['nom']}\nSociété : {$f['societe']}\nE-mail : {$f['email']}\nTéléphone : {$f['tel']}\n\n" .
 		"Dates : $dates\nLieu : {$f['lieu']}\nPersonnalisation : {$f['perso']}\n\n" .
-		"Machines :\n$lignes\n\nMessage :\n{$f['message']}\n\nPage d’origine : {$f['page']}\n\n" .
-		"Voir dans l’administration : " . admin_url('post.php?post=' . $id . '&action=edit');
-	$ok1 = wp_mail(SA_DEVIS_DEST, "[Devis] $ref – {$f['nom']}" . ($f['societe'] ? " ({$f['societe']})" : ''), $corps, ['Reply-To: ' . $f['nom'] . ' <' . $f['email'] . '>']);
+		"Machines :\n$lignes\n\nMessage :\n{$f['message']}\n\nVoir dans l’administration : $admin_url";
+	$ok1 = sa_mail_envoyer(SA_DEVIS_DEST, "Nouvelle demande de devis $ref – {$f['nom']}" . ($f['societe'] ? " ({$f['societe']})" : ''), $html1, $corps, $f['nom'] . ' <' . $f['email'] . '>');
+	$html2 = sa_mail_html([
+		'pre' => "Nous avons bien reçu votre demande ($ref). Nous revenons vers vous rapidement.",
+		'kick' => 'Demande bien reçue', 'titre' => 'Merci ' . esc_html($f['nom']) . ' !', 'intro' => 'Nous avons bien reçu votre demande de devis. Notre équipe l’étudie et revient vers vous rapidement avec une proposition détaillée.<br><br><span style="display:inline-block;background:#000142;color:#ffd900;font-weight:700;padding:6px 12px;border-radius:3px;letter-spacing:.04em">Référence ' . esc_html($ref) . '</span>',
+		'blocs' => [['Votre événement', $infos]],
+		'machines' => $machines, 'message' => $f['message'],
+		'etapes' => ['Nous étudions votre demande et vérifions la disponibilité des machines.', 'Vous recevez votre devis détaillé, livraison et installation comprises.', 'Si vous personnalisez, nous vous envoyons les gabarits : visuels à fournir au plus tard 10 jours avant l’événement.'],
+		'boutons' => [['Nous appeler : 06 29 72 90 92', 'tel:+33629729092', true], ['Voir nos réalisations', home_url('/realisations/'), false]],
+		'pied' => 'Une question ? Répondez simplement à cet e-mail ou écrivez à <a href="mailto:contact@stationarcade.fr" style="color:#00e1d4">contact@stationarcade.fr</a>.',
+	]);
 	$conf = "Bonjour {$f['nom']},\n\nNous avons bien reçu votre demande de devis (référence $ref).\n" .
 		"Nous revenons vers vous rapidement avec une proposition détaillée.\n\nVotre sélection :\n$lignes\n\n" .
 		"Pour toute question : 06 29 72 90 92 ou contact@stationarcade.fr\n\nL’équipe Station Arcade";
-	$ok2 = wp_mail($f['email'], "Votre demande de devis Station Arcade ($ref)", $conf, ['Reply-To: Station Arcade <' . SA_DEVIS_DEST . '>']);
+	$ok2 = sa_mail_envoyer($f['email'], "Votre demande de devis Station Arcade ($ref)", $html2, $conf, 'Station Arcade <' . SA_DEVIS_DEST . '>');
 	update_post_meta($id, '_sa_mail_entreprise', $ok1 ? 1 : 0);
 	update_post_meta($id, '_sa_mail_client', $ok2 ? 1 : 0);
 	return new WP_REST_Response(['ok' => true, 'ref' => $ref, 'mail' => (bool) $ok1], 201);
@@ -141,3 +164,56 @@ add_action('manage_sa_devis_posts_custom_column', function ($col, $id) {
 	if ($col === 'sa_statut') { $s = get_post_meta($id, '_sa_statut', true); echo esc_html(sa_devis_statuts()[$s] ?? $s); if (!get_post_meta($id, '_sa_mail_entreprise', true)) echo ' <span style="color:#b32d2e">· e-mail non parti</span>'; }
 	if ($col === 'sa_date_evt') { $a = get_post_meta($id, '_sa_date', true); $b = get_post_meta($id, '_sa_date_fin', true); echo esc_html($a . ($b && $b !== $a ? ' → ' . $b : '')); }
 }, 10, 2);
+
+
+// Mise en page des e-mails (HTML compatible messageries, version texte jointe)
+function sa_mail_envoyer($a, $sujet, $html, $texte, $reply) {
+	$alt = function ($m) use ($texte) { $m->AltBody = $texte; };
+	add_action('phpmailer_init', $alt);
+	$ok = wp_mail($a, $sujet, $html, ['Content-Type: text/html; charset=UTF-8', 'Reply-To: ' . $reply]);
+	remove_action('phpmailer_init', $alt);
+	return $ok;
+}
+function sa_mail_html($o) {
+	$logo = content_url('uploads/2026/11/logo-blanc.png');
+	$e = 'esc_html';
+	$h = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Station Arcade</title></head>';
+	$h .= '<body style="margin:0;padding:0;background:#ecedf5;font-family:Poppins,Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d35">';
+	$h .= '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' . $e($o['pre']) . '</div>';
+	$h .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ecedf5"><tr><td align="center" style="padding:24px 12px">';
+	$h .= '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:6px;overflow:hidden">';
+	$h .= '<tr><td style="background:#000142;padding:22px 28px;border-bottom:4px solid #00e1d4"><img src="' . esc_url($logo) . '" alt="Station Arcade" width="150" style="display:block;width:150px;height:auto;border:0"></td></tr>';
+	$h .= '<tr><td style="padding:28px 28px 8px"><p style="margin:0 0 6px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#00a89f">' . $e($o['kick']) . '</p>';
+	$h .= '<h1 style="margin:0 0 12px;font-size:26px;line-height:1.2;color:#000142">' . $o['titre'] . '</h1><p style="margin:0;font-size:15px;line-height:1.6;color:#3a3a55">' . $o['intro'] . '</p></td></tr>';
+	if (!empty($o['boutons'])) {
+		$h .= '<tr><td style="padding:18px 28px 6px">';
+		foreach ($o['boutons'] as $b) $h .= '<a href="' . esc_url($b[1], ['http', 'https', 'mailto', 'tel']) . '" style="display:inline-block;margin:0 8px 10px 0;padding:12px 18px;border-radius:3px;font-weight:700;font-size:14px;text-decoration:none;' . ($b[2] ? 'background:#ffd900;color:#000028' : 'background:#ffffff;color:#000142;border:2px solid #000142') . '">' . $e($b[0]) . '</a>';
+		$h .= '</td></tr>';
+	}
+	foreach ($o['blocs'] as $bl) {
+		$h .= '<tr><td style="padding:16px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#000142">' . $e($bl[0]) . '</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">';
+		foreach ($bl[1] as $r) $h .= '<tr><td style="padding:8px 0;border-bottom:1px solid #ececf3;font-size:13px;color:#6b6b85;width:38%">' . $e($r[0]) . '</td><td style="padding:8px 0;border-bottom:1px solid #ececf3;font-size:14px;color:#1d1d35;font-weight:600">' . $e($r[1]) . '</td></tr>';
+		$h .= '</table></td></tr>';
+	}
+	$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#000142">Machines demandées</p>';
+	if ($o['machines']) {
+		$h .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">';
+		foreach ($o['machines'] as $m) {
+			$img = $m['img'] ? '<img src="' . esc_url($m['img']) . '" alt="" width="56" height="56" style="display:block;width:56px;height:56px;border-radius:4px;object-fit:cover;border:0">' : '';
+			$nom = $m['url'] ? '<a href="' . esc_url($m['url']) . '" style="color:#000142;text-decoration:none">' . $e($m['nom']) . '</a>' : $e($m['nom']);
+			$h .= '<tr><td width="66" style="padding:6px 0">' . $img . '</td><td style="padding:6px 0;font-size:14px;font-weight:600">' . $nom . '</td><td align="right" style="padding:6px 0;font-size:14px;color:#000142;font-weight:700;white-space:nowrap">× ' . (int) $m['q'] . '</td></tr>';
+		}
+		$h .= '</table>';
+	} else $h .= '<p style="margin:0;font-size:14px;color:#3a3a55">Aucune machine choisie : conseil souhaité.</p>';
+	$h .= '</td></tr>';
+	if ($o['message'] !== '') $h .= '<tr><td style="padding:20px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#000142">Message</p><div style="background:#f5f5fa;border-left:4px solid #00e1d4;padding:12px 14px;font-size:14px;line-height:1.6;color:#1d1d35">' . nl2br($e($o['message'])) . '</div></td></tr>';
+	if (!empty($o['etapes'])) {
+		$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#000142">La suite</p>';
+		foreach ($o['etapes'] as $i => $s) $h .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:8px"><tr><td valign="top" style="width:30px"><span style="display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:#00e1d4;color:#000028;font-size:12px;font-weight:700;text-align:center">' . ($i + 1) . '</span></td><td style="font-size:14px;line-height:1.5;color:#3a3a55">' . $e($s) . '</td></tr></table>';
+		$h .= '</td></tr>';
+	}
+	$h .= '<tr><td style="padding:24px 28px 26px;font-size:13px;line-height:1.6;color:#6b6b85">' . $o['pied'] . '</td></tr>';
+	$h .= '<tr><td style="background:#000142;padding:18px 28px;font-size:12px;line-height:1.6;color:#c9cbe6">Station Arcade · Location et personnalisation de jeux d’arcade<br><a href="tel:+33629729092" style="color:#ffffff;text-decoration:none">06 29 72 90 92</a> · <a href="mailto:contact@stationarcade.fr" style="color:#ffffff;text-decoration:none">contact@stationarcade.fr</a> · <a href="https://www.instagram.com/stationarcade.fr/" style="color:#00e1d4;text-decoration:none">Instagram</a></td></tr>';
+	$h .= '</table></td></tr></table></body></html>';
+	return $h;
+}

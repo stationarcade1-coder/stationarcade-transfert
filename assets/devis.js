@@ -34,7 +34,7 @@ f.addEventListener('submit',function(e){e.preventDefault();if(envoi)return;er.hi
  var v=function(n){var el=f.elements[n];return el?(el.value||'').trim():''};
  var manque=[];if(!v('nom'))manque.push('votre nom');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email')))manque.push('un e-mail valide');if(v('tel').replace(/\D/g,'').length<9)manque.push('votre téléphone');
  if(manque.length){er.textContent='Merci d’indiquer '+manque.join(' et ')+'.';er.hidden=false;(f.elements[!v('nom')?'nom':(manque.indexOf('un e-mail valide')>-1?'email':'tel')]).focus();return}
- var d=SA.devis(),machines=Object.keys(d).filter(function(k){return d[k]>0}).map(function(k){return {id:k,q:d[k],nom:(P[k]||{}).nom||k}});
+ var d=SA.devis(),machines=Object.keys(d).filter(function(k){return d[k]>0}).map(function(k){return {id:k,q:d[k],nom:(P[k]||{}).nom||k,img:(P[k]||{}).img||'',url:(P[k]||{}).url||''}});
  var data={jeton:jeton,site_web:v('site_web'),nom:v('nom'),societe:v('societe'),email:v('email'),tel:v('tel'),date:v('date_debut'),date_fin:v('date_fin'),lieu:v('lieu'),perso:f.elements.perso.checked?'Oui':'Non',message:v('message'),machines:machines,page:document.referrer||location.href};
  envoi=true;btn.disabled=true;btn.textContent='Envoi en cours…';
  fetch('/wp-json/sa/v1/devis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){return r.json().then(function(j){return {s:r.status,j:j}})}).then(function(x){
