@@ -61,5 +61,6 @@
 "/payement": "/devis/",
 "/payement/commande-recu": "/devis/",
 "/sample-page": "/",
-"/etiquette-produit/c": "/location/"
+"/etiquette-produit/c": "/location/",
+"/categorie-produit/machine-a-grappin": "/location/machines-a-pince-et-gashapons/"
 }

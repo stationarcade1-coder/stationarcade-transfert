@@ -54,6 +54,7 @@ add_action('template_redirect', function () {
 		'/tables-de-jeux' => '/location/jeux-arcade-et-simulateurs/',
 		'/jeux-sportifs' => '/location/jeux-arcade-et-simulateurs/',
 		'/jeux-forains' => '/location/jeux-arcade-et-simulateurs/',
+		'/categorie-produit/machine-a-grappin' => '/location/machines-a-pince-et-gashapons/',
 		'/categorie-produit/machine-a-grappin-gashapon' => '/location/machines-a-pince-et-gashapons/',
 		'/categorie-produit/arcade-et-fetes-foraines' => '/location/jeux-arcade-et-simulateurs/',
 		'/categorie-produit/jeux-pour-enfants' => '/location/jeux-pour-enfants/',
@@ -68,4 +69,25 @@ add_action('template_redirect', function () {
 	];
 	$chemin = '/' . trim(strtolower(rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))), '/');
 	if (isset($map[$chemin])) { wp_redirect(home_url($map[$chemin]), 301, 'Station Arcade'); exit; }
+	// Filet de sécurité : anciennes adresses WooCommerce non listées ci-dessus
+	$parts = explode('/', trim($chemin, '/'));
+	$racine = $parts[0] ?? '';
+	$slug = $parts[count($parts) - 1] ?? '';
+	$cat = function ($s) {
+		$regles = [
+			'pince|grappin|gashapon|capsule|candy' => '/location/machines-a-pince-et-gashapons/',
+			'distrib|cadeau|billet|money|cash' => '/location/distributeurs-de-cadeaux/',
+			'enfant|kids|kid' => '/location/jeux-pour-enfants/',
+			'photo|video|booth|selfie' => '/location/photobooth-cabine-photo/',
+			'arcade|simulat|forain|sport|borne|jeux|jeu|air-hockey|baby|flech|basket' => '/location/jeux-arcade-et-simulateurs/',
+		];
+		foreach ($regles as $re => $cible) if (preg_match('/' . $re . '/', $s)) return $cible;
+		return '/location/';
+	};
+	$cible = null;
+	if (in_array($racine, ['categorie-produit', 'product-category', 'etiquette-produit', 'product-tag'], true)) $cible = $cat($slug);
+	elseif ($racine === 'produit' && count($parts) > 1) $cible = $cat($slug);
+	elseif (in_array($racine, ['boutique', 'shop', 'catalogue'], true)) $cible = '/location/';
+	elseif (in_array($racine, ['panier', 'cart', 'commande', 'checkout', 'mon-compte', 'my-account', 'payement', 'paiement'], true)) $cible = '/devis/';
+	if ($cible) { wp_redirect(home_url($cible), 301, 'Station Arcade'); exit; }
 }, 1);
