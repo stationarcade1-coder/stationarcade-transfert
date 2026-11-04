@@ -200,51 +200,54 @@ function sa_mail_envoyer($a, $sujet, $html, $texte, $reply) {
 function sa_mail_html($o) {
 	$logo = content_url('uploads/2026/11/logo-blanc.png');
 	$e = 'esc_html';
-	$h = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><title>Station Arcade</title></head>';
-	$h .= '<body style="margin:0;padding:0;background-color:#000028;background-image:linear-gradient(#000028,#000028);font-family:Poppins,Segoe UI,Helvetica,Arial,sans-serif;color:#ffffff">';
+	// Gmail (iOS/Android) en mode sombre inverse les couleurs du texte : ce double calque les rétablit.
+	$w = function ($s) { return '<span class="gm-s"><span class="gm-d">' . $s . '</span></span>'; };
+	$h = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><title>Station Arcade</title>';
+	$h .= '<style>u + .body .gm-s{background:#000;mix-blend-mode:screen;display:inline-block}u + .body .gm-d{background:#000;mix-blend-mode:difference;display:inline-block}</style></head>';
+	$h .= '<body class="body" style="margin:0;padding:0;background-color:#000028;background-image:linear-gradient(#000028,#000028);font-family:Poppins,Segoe UI,Helvetica,Arial,sans-serif;color:#ffffff">';
 	$h .= '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' . $e($o['pre']) . '</div>';
 	$h .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#000028;background-image:linear-gradient(#000028,#000028)"><tr><td align="center" style="padding:24px 12px">';
 	$h .= '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background-color:#000142;background-image:linear-gradient(#000142,#000142);border-radius:6px;overflow:hidden;border:1px solid #1d1f5c">';
 	$h .= '<tr><td style="background-color:#000131;background-image:linear-gradient(#000131,#000131);padding:22px 28px;border-bottom:4px solid #00e1d4"><img src="' . esc_url($logo) . '" alt="Station Arcade" width="150" style="display:block;width:150px;height:auto;border:0"></td></tr>';
-	$h .= '<tr><td style="padding:28px 28px 8px"><p style="margin:0 0 6px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#00e1d4">' . $e($o['kick']) . '</p>';
-	$h .= '<h1 style="margin:0 0 12px;font-size:26px;line-height:1.2;color:#ffffff">' . $o['titre'] . '</h1><p style="margin:0;font-size:15px;line-height:1.6;color:#c9cbe6">' . $o['intro'] . '</p></td></tr>';
+	$h .= '<tr><td style="padding:28px 28px 8px"><p style="margin:0 0 6px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#00e1d4">' . $w($e($o['kick'])) . '</p>';
+	$h .= '<h1 style="margin:0 0 12px;font-size:26px;line-height:1.2;color:#ffffff">' . $w($o['titre']) . '</h1><p style="margin:0;font-size:15px;line-height:1.6;color:#c9cbe6">' . $w($o['intro']) . '</p></td></tr>';
 	if (!empty($o['boutons'])) {
 		$h .= '<tr><td style="padding:18px 28px 6px">';
-		foreach ($o['boutons'] as $b) $h .= '<a href="' . esc_url($b[1], ['http', 'https', 'mailto', 'tel']) . '" style="display:inline-block;margin:0 8px 10px 0;padding:12px 18px;border-radius:3px;font-weight:700;font-size:14px;text-decoration:none;' . ($b[2] ? 'border:2px solid #ffd900;color:#ffd900' : 'border:2px solid #ffffff;color:#ffffff') . '">' . $e($b[0]) . '</a>';
+		foreach ($o['boutons'] as $b) $h .= '<a href="' . esc_url($b[1], ['http', 'https', 'mailto', 'tel']) . '" style="display:inline-block;margin:0 8px 10px 0;padding:12px 18px;border-radius:3px;font-weight:700;font-size:14px;text-decoration:none;' . ($b[2] ? 'border:2px solid #ffd900;color:#ffd900' : 'border:2px solid #ffffff;color:#ffffff') . '">' . $w($e($b[0])) . '</a>';
 		$h .= '</td></tr>';
 	}
 	foreach ($o['blocs'] as $bl) {
-		$h .= '<tr><td style="padding:16px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#ffffff">' . $e($bl[0]) . '</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">';
-		foreach ($bl[1] as $r) $h .= '<tr><td style="padding:8px 0;border-bottom:1px solid #23265e;font-size:13px;color:#a7a9cc;width:38%">' . $e($r[0]) . '</td><td style="padding:8px 0;border-bottom:1px solid #23265e;font-size:14px;color:#ffffff;font-weight:600">' . $e($r[1]) . '</td></tr>';
+		$h .= '<tr><td style="padding:16px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#ffffff">' . $w($e($bl[0])) . '</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">';
+		foreach ($bl[1] as $r) $h .= '<tr><td style="padding:8px 0;border-bottom:1px solid #23265e;font-size:13px;color:#a7a9cc;width:38%">' . $w($e($r[0])) . '</td><td style="padding:8px 0;border-bottom:1px solid #23265e;font-size:14px;color:#ffffff;font-weight:600">' . $w($e($r[1])) . '</td></tr>';
 		$h .= '</table></td></tr>';
 	}
-	$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#ffffff">Machines demandées</p>';
+	$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#ffffff">' . $w('Machines demandées') . '</p>';
 	if ($o['machines']) {
 		$h .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">';
 		foreach ($o['machines'] as $m) {
 			$img = $m['img'] ? '<img src="' . esc_url($m['img']) . '" alt="" width="56" height="56" style="display:block;width:56px;height:56px;border-radius:4px;object-fit:cover;border:0">' : '';
-			$nom = $m['url'] ? '<a href="' . esc_url($m['url']) . '" style="color:#ffffff;text-decoration:none">' . $e($m['nom']) . '</a>' : $e($m['nom']);
-			$h .= '<tr><td width="66" style="padding:6px 0">' . $img . '</td><td style="padding:6px 0;font-size:14px;font-weight:600;color:#ffffff">' . $nom . '</td><td align="right" style="padding:6px 0;font-size:14px;color:#ffd900;font-weight:700;white-space:nowrap">× ' . (int) $m['q'] . '</td></tr>';
+			$nom = $m['url'] ? '<a href="' . esc_url($m['url']) . '" style="color:#ffffff;text-decoration:none">' . $w($e($m['nom'])) . '</a>' : $w($e($m['nom']));
+			$h .= '<tr><td width="66" style="padding:6px 0">' . $img . '</td><td style="padding:6px 0;font-size:14px;font-weight:600;color:#ffffff">' . $nom . '</td><td align="right" style="padding:6px 0;font-size:14px;color:#ffd900;font-weight:700;white-space:nowrap">' . $w('× ' . (int) $m['q']) . '</td></tr>';
 		}
 		$h .= '</table>';
-	} else $h .= '<p style="margin:0;font-size:14px;color:#c9cbe6">Aucune machine choisie : conseil souhaité.</p>';
+	} else $h .= '<p style="margin:0;font-size:14px;color:#c9cbe6">' . $w('Aucune machine choisie : conseil souhaité.') . '</p>';
 	$h .= '</td></tr>';
-	if ($o['message'] !== '') $h .= '<tr><td style="padding:20px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#ffffff">Message</p><div style="background-color:#000131;background-image:linear-gradient(#000131,#000131);border-left:4px solid #00e1d4;padding:12px 14px;font-size:14px;line-height:1.6;color:#ffffff">' . nl2br($e($o['message'])) . '</div></td></tr>';
+	if ($o['message'] !== '') $h .= '<tr><td style="padding:20px 28px 0"><p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#ffffff">' . $w('Message') . '</p><div style="background-color:#000131;background-image:linear-gradient(#000131,#000131);border-left:4px solid #00e1d4;padding:12px 14px;font-size:14px;line-height:1.6;color:#ffffff">' . $w(nl2br($e($o['message']))) . '</div></td></tr>';
 	if (!empty($o['etapes'])) {
-		$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#ffffff">La suite</p>';
-		foreach ($o['etapes'] as $i => $s) $h .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:8px"><tr><td valign="top" style="width:30px"><span style="display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:#00e1d4;color:#000028;font-size:12px;font-weight:700;text-align:center">' . ($i + 1) . '</span></td><td style="font-size:14px;line-height:1.5;color:#c9cbe6">' . $e($s) . '</td></tr></table>';
+		$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#ffffff">' . $w('La suite') . '</p>';
+		foreach ($o['etapes'] as $i => $s) $h .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:8px"><tr><td valign="top" style="width:30px"><span style="display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:#00e1d4;background-image:linear-gradient(#00e1d4,#00e1d4);color:#000028;font-size:12px;font-weight:700;text-align:center">' . ($i + 1) . '</span></td><td style="font-size:14px;line-height:1.5;color:#c9cbe6">' . $w($e($s)) . '</td></tr></table>';
 		$h .= '</td></tr>';
 	}
 	if (!empty($o['perso'])) {
-		$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 6px;font-size:16px;font-weight:700;color:#ffffff">Vos gabarits de personnalisation</p>';
+		$h .= '<tr><td style="padding:22px 28px 0"><p style="margin:0 0 6px;font-size:16px;font-weight:700;color:#ffffff">' . $w('Vos gabarits de personnalisation') . '</p>';
 		if (!empty($o['gabarits'])) {
-			$h .= '<p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#c9cbe6">Fichiers PDF à remettre à votre graphiste, avec les consignes d’impression.</p>';
-			foreach ($o['gabarits'] as $g) $h .= '<a href="' . esc_url($g[1]) . '" style="display:inline-block;margin:0 8px 10px 0;padding:10px 16px;border-radius:3px;font-weight:700;font-size:13px;text-decoration:none;border:2px solid #00e1d4;color:#00e1d4">Gabarit ' . esc_html($g[0]) . ' (PDF)</a>';
-		} else $h .= '<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#c9cbe6">Retrouvez tous nos gabarits sur <a href="' . esc_url(home_url('/personnalisation/gabarits/')) . '" style="color:#00e1d4">la page Gabarits</a> ; nous vous confirmons ceux de vos machines avec le devis.</p>';
+			$h .= '<p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#c9cbe6">' . $w('Fichiers PDF à remettre à votre graphiste, avec les consignes d’impression.') . '</p>';
+			foreach ($o['gabarits'] as $g) $h .= '<a href="' . esc_url($g[1]) . '" style="display:inline-block;margin:0 8px 10px 0;padding:10px 16px;border-radius:3px;font-weight:700;font-size:13px;text-decoration:none;border:2px solid #00e1d4;color:#00e1d4">' . $w('Gabarit ' . esc_html($g[0]) . ' (PDF)') . '</a>';
+		} else $h .= '<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#c9cbe6">' . $w('Retrouvez tous nos gabarits sur <a href="' . esc_url(home_url('/personnalisation/gabarits/')) . '" style="color:#00e1d4">la page Gabarits</a> ; nous vous confirmons ceux de vos machines avec le devis.') . '</p>';
 		$h .= '</td></tr>';
 	}
-	$h .= '<tr><td style="padding:24px 28px 26px;font-size:13px;line-height:1.6;color:#a7a9cc">' . $o['pied'] . '</td></tr>';
-	$h .= '<tr><td style="background-color:#000028;background-image:linear-gradient(#000028,#000028);padding:18px 28px;font-size:12px;line-height:1.6;color:#c9cbe6">Station Arcade · Location et personnalisation de jeux d’arcade<br><a href="tel:+33629729092" style="color:#ffffff;text-decoration:none">06 29 72 90 92</a> · <a href="mailto:contact@stationarcade.fr" style="color:#ffffff;text-decoration:none">contact@stationarcade.fr</a> · <a href="https://www.instagram.com/stationarcade.fr/" style="color:#00e1d4;text-decoration:none">Instagram</a></td></tr>';
+	$h .= '<tr><td style="padding:24px 28px 26px;font-size:13px;line-height:1.6;color:#a7a9cc">' . $w($o['pied']) . '</td></tr>';
+	$h .= '<tr><td style="background-color:#000028;background-image:linear-gradient(#000028,#000028);padding:18px 28px;font-size:12px;line-height:1.6;color:#c9cbe6">' . $w('Station Arcade · Location et personnalisation de jeux d’arcade<br><a href="tel:+33629729092" style="color:#ffffff;text-decoration:none">06 29 72 90 92</a> · <a href="mailto:contact@stationarcade.fr" style="color:#ffffff;text-decoration:none">contact@stationarcade.fr</a> · <a href="https://www.instagram.com/stationarcade.fr/" style="color:#00e1d4;text-decoration:none">Instagram</a>') . '</td></tr>';
 	$h .= '</table></td></tr></table></body></html>';
 	return $h;
 }
